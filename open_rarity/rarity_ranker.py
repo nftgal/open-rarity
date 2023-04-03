@@ -66,12 +66,12 @@ class RarityRanker:
             return []
 
         tokens = collection.tokens
-        token_attr_scores, token_attr_names, scores = scorer.score_tokens(collection, tokens=tokens)
-        # token_attr_scores, token_attr_names, scores = harmonic_handler.score_tokens(collection, tokens=tokens)
-        # token_attr_scores, token_attr_names, scores = arithmetic_handler.score_tokens(collection, tokens=tokens)
-        # token_attr_scores, token_attr_names, scores = geometric_handler.score_tokens(collection, tokens=tokens)
-        # token_attr_scores, token_attr_names, scores = sum_handler.score_tokens(collection, tokens=tokens)
-        # token_attr_scores, token_attr_names, scores = ic_handler.score_tokens(collection, tokens=tokens)
+        token_attr_scores, token_attr_weights, token_attr_names, scores = scorer.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_weights, token_attr_names, scores = harmonic_handler.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_weights, token_attr_names, scores = arithmetic_handler.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_weights, token_attr_names, scores = geometric_handler.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_weights, token_attr_names, scores = sum_handler.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_weights, token_attr_names, scores = ic_handler.score_tokens(collection, tokens=tokens)
 
         # fail ranking if dimension of scores doesn't match dimension of tokens
         assert len(tokens) == len(scores)
@@ -94,7 +94,7 @@ class RarityRanker:
                 )
             )
 
-        return (token_attr_scores, token_attr_names, RarityRanker.set_rarity_ranks(token_rarities))
+        return (token_attr_scores, token_attr_weights, token_attr_names, RarityRanker.set_rarity_ranks(token_rarities))
 
     @staticmethod
     def set_rarity_ranks(
