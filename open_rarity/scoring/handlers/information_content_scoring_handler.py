@@ -71,7 +71,7 @@ class InformationContentScoringHandler:
             collection_attributes=collection_attributes,
             collection_null_attributes=collection_null_attributes,
         )
-        return [
+        data = [
             self._score_token(
                 collection=collection,
                 token=t,
@@ -83,6 +83,16 @@ class InformationContentScoringHandler:
             )
             for t in tokens
         ]
+
+        token_attr_scores = []
+        token_attr_names = []
+        token_scores = []
+        for attr_scores, sorted_attr_names, token_score in data:
+            token_attr_scores.append(attr_scores)
+            token_attr_names.append(sorted_attr_names)
+            token_scores.append(token_score)
+
+        return (token_attr_scores, token_attr_names, token_scores)
 
     # Private methods
     def _score_token(
@@ -116,7 +126,7 @@ class InformationContentScoringHandler:
         """
         logger.debug("Computing score for token %s", token)
 
-        ic_token_score = self._get_ic_score(
+        attr_scores, sorted_attr_names, ic_token_score = self._get_ic_score(
             collection, token, collection_null_attributes=collection_null_attributes
         )
         logger.debug("IC token score %s", ic_token_score)
@@ -140,7 +150,7 @@ class InformationContentScoringHandler:
             normalized_token_score,
         )
 
-        return normalized_token_score
+        return (attr_scores, sorted_attr_names, normalized_token_score)
 
     def _get_ic_score(
         self,
@@ -151,7 +161,7 @@ class InformationContentScoringHandler:
         # First calculate the individual attribute scores for all attributes
         # of the provided token. Scores are the inverted probabilities of the
         # attribute in the collection.
-        attr_scores, _ = get_token_attributes_scores_and_weights(
+        attr_scores, attr_weights, sorted_attr_names = get_token_attributes_scores_and_weights(
             collection=collection,
             token=token,
             normalized=False,
@@ -160,7 +170,7 @@ class InformationContentScoringHandler:
 
         # Get a single score (via information content) for the token by taking
         # the sum of the logarithms of the attributes' scores.
-        return -np.sum(np.log2(np.reciprocal(attr_scores)))
+        return (attr_scores, sorted_attr_names, -np.sum(np.log2(np.reciprocal(attr_scores))))
 
     def _get_collection_entropy(
         self,

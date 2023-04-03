@@ -3,8 +3,26 @@ import math
 from open_rarity.models.collection import Collection
 from open_rarity.models.token_rarity import TokenRarity
 from open_rarity.scoring.scorer import Scorer
+from open_rarity.scoring.handlers.arithmetic_mean_scoring_handler import (
+    ArithmeticMeanScoringHandler,
+)
+from open_rarity.scoring.handlers.geometric_mean_scoring_handler import (
+    GeometricMeanScoringHandler,
+)
+from open_rarity.scoring.handlers.harmonic_mean_scoring_handler import (
+    HarmonicMeanScoringHandler,
+)
+from open_rarity.scoring.handlers.information_content_scoring_handler import (
+    InformationContentScoringHandler,
+)
+from open_rarity.scoring.handlers.sum_scoring_handler import SumScoringHandler
 from open_rarity.scoring.token_feature_extractor import TokenFeatureExtractor
 
+harmonic_handler = HarmonicMeanScoringHandler()
+arithmetic_handler = ArithmeticMeanScoringHandler()
+geometric_handler = GeometricMeanScoringHandler()
+sum_handler = SumScoringHandler()
+ic_handler = InformationContentScoringHandler()
 
 class RarityRanker:
     """This class is used to rank a set of tokens given their rarity scores."""
@@ -48,7 +66,12 @@ class RarityRanker:
             return []
 
         tokens = collection.tokens
-        scores: list[float] = scorer.score_tokens(collection, tokens=tokens)
+        token_attr_scores, token_attr_names, scores = scorer.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_names, scores = harmonic_handler.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_names, scores = arithmetic_handler.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_names, scores = geometric_handler.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_names, scores = sum_handler.score_tokens(collection, tokens=tokens)
+        # token_attr_scores, token_attr_names, scores = ic_handler.score_tokens(collection, tokens=tokens)
 
         # fail ranking if dimension of scores doesn't match dimension of tokens
         assert len(tokens) == len(scores)
@@ -71,7 +94,7 @@ class RarityRanker:
                 )
             )
 
-        return RarityRanker.set_rarity_ranks(token_rarities)
+        return (token_attr_scores, token_attr_names, RarityRanker.set_rarity_ranks(token_rarities))
 
     @staticmethod
     def set_rarity_ranks(
