@@ -78,7 +78,7 @@ def score_collection_and_output_results(
             writer.writerows(csv_rows)
 
 
-if __name__ == "__main__":
+def score_collection_main(collection_name):
     """This script by default fetches bored ape yacht club collection and token
     metadata from the Opensea API via opensea_api_helpers and scores + ranks the
     collection via OpenRarity scorer.
@@ -106,6 +106,7 @@ if __name__ == "__main__":
         `python -m scripts.score_real_collections boredapeyachtclub proof-moonbirds`
     """
     args = parser.parse_args()
+    args.slugs = [collection_name]
     use_cache = args.use_cache
     print(f"Scoring collections: {args.slugs} with {use_cache=}")
     print(f"Output file prefix: {args.filename_prefix} with type .{args.filetype}")
