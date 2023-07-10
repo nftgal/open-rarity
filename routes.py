@@ -1,4 +1,5 @@
 import logging
+import json
 
 from flask import Blueprint, jsonify, request
 
@@ -15,8 +16,7 @@ def submit_collection():
         collection_name = request.form.get('collection_name')
         
         #return jsonify({'collection': str(collection_name)})
-        score_collection_main(collection_name)
-
-        return jsonify({'status': 'success'})
+        output_json = score_collection_main(collection_name)
+        return json.dumps(output_json)
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500

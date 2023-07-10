@@ -94,7 +94,7 @@ class RarityRanker:
                 )
             )
 
-        return (token_attr_scores, token_attr_names, RarityRanker.set_rarity_ranks(token_rarities))
+        return (token_attr_scores, token_attr_weights, token_attr_names, RarityRanker.set_rarity_ranks(token_rarities))
 
     @staticmethod
     def set_rarity_ranks(
