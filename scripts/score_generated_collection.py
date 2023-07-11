@@ -1,43 +1,39 @@
-from open_rarity import Collection, OpenRarityScorer, Token
-from open_rarity.rarity_ranker import RarityRanker
+from open_rarity import (
+    Collection,
+    Token,
+    RarityRanker,
+    TokenMetadata,
+    StringAttribute,
+)
+from open_rarity.models.token_identifier import EVMContractTokenIdentifier
+from open_rarity.models.token_standard import TokenStandard
 
-if __name__ == "__main__":
-    scorer = OpenRarityScorer()
+import json
 
+def score_datasets_main(name, attributes_frequency_counts, contract_address, token_standard, metadata_string_attributes):
+    attributes={}
+    for key, value in metadata_string_attributes.items():
+        attributes[key] = StringAttribute(name=value["name"], value=value["value"])
+
+    # Create OpenRarity collection object and provide all metadata information
     collection = Collection(
-        name="My Collection Name",
+        name=name,
+        attributes_frequency_counts=attributes_frequency_counts,
         tokens=[
-            Token.from_erc721(
-                contract_address="0xa3049...",
-                token_id=1,
-                metadata_dict={"hat": "cap", "shirt": "blue"},
-            ),
-            Token.from_erc721(
-                contract_address="0xa3049...",
-                token_id=2,
-                metadata_dict={"hat": "visor", "shirt": "green"},
-            ),
-            Token.from_erc721(
-                contract_address="0xa3049...",
-                token_id=3,
-                metadata_dict={"hat": "visor", "shirt": "blue"},
+            Token(
+                token_identifier=EVMContractTokenIdentifier(
+                    contract_address=contract_address, token_id=1
+                ),
+                token_standard=getattr(TokenStandard, token_standard),
+                metadata=TokenMetadata(
+                    string_attributes=attributes
+                ),
             ),
         ],
     )  # Replace inputs with your collection-specific details here
 
     # Generate scores for a collection
-    token_scores = scorer.score_collection(collection=collection)
-
-    print(f"Token scores for collection: {token_scores}")
-
-    # Generate score for a single token in a collection
-    token = collection.tokens[0]  # Your token details filled in
-    token_score = scorer.score_token(collection=collection, token=token)
-
-    # Better yet.. just use ranker directly!
     ranked_tokens = RarityRanker.rank_collection(collection=collection)
-    for ranked_token in ranked_tokens:
-        print(
-            f"Token {ranked_token.token} has rank {ranked_token.rank} "
-            "and score {ranked_token.score}"
-        )
+
+    for token_rarity in ranked_tokens:
+        return token_rarity
