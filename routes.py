@@ -29,10 +29,10 @@ def submit_datasets():
         attributes_frequency_counts = request.json['attributes_frequency_counts']
         contract_address = request.json['contract_address']
         token_standard = request.json['token_standard']
-        metadata_string_attributes = request.json['metadata_string_attributes']
+        tokens = request.json['tokens']
 
         #return jsonify({'collection': str(collection_name)})
-        output_json = score_datasets_main(name, attributes_frequency_counts, contract_address, token_standard, metadata_string_attributes)
+        output_json = score_datasets_main(name, attributes_frequency_counts, contract_address, token_standard, tokens)
         return json.dumps(output_json)
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
