@@ -15,13 +15,12 @@ main_routes = Blueprint('main', __name__)
 def submit_collection():
     try:
         collection_name = request.form.get('collection_name')
-        
+
         #return jsonify({'collection': str(collection_name)})
         output_json = score_collection_main(collection_name)
         return json.dumps(output_json)
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
-
 @main_routes.route('/api/submit_datasets', methods=['POST'])
 def submit_datasets():
     try:
@@ -31,7 +30,6 @@ def submit_datasets():
         token_standard = request.json['token_standard']
         tokens = request.json['tokens']
 
-        #return jsonify({'collection': str(collection_name)})
         output_json = score_datasets_main(name, attributes_frequency_counts, contract_address, token_standard, tokens)
         return json.dumps(output_json)
     except Exception as e:
