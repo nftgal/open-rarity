@@ -48,7 +48,7 @@ def score_collection_and_output_results(
     print(f"Created collection {slug} with {collection.token_total_supply} tokens")
 
     # Score, rank  and sort ascending by token rarity rank
-    token_attr_scores, token_attr_weights, token_attr_names, sorted_token_rarities = RarityRanker.rank_collection(
+    token_attr_scores, token_attr_names, sorted_token_rarities = RarityRanker.rank_collection(
         collection=collection
     )
 
@@ -60,7 +60,7 @@ def score_collection_and_output_results(
         token_id = rarity_token.token.token_identifier.token_id
         rank = rarity_token.rank
         score = rarity_token.score
-        json_output[token_id] = {"rank": rank, "score": score, "token_attr_scores": token_attr_scores[idx], "token_attr_weights": token_attr_weights[idx], "token_attr_names": token_attr_names[idx]}
+        json_output[token_id] = {"rank": rank, "score": score, "token_attr_scores": token_attr_scores[idx], "token_attr_names": token_attr_names[idx]}
         csv_rows.append([token_id, rank, score])
     return json_output
 

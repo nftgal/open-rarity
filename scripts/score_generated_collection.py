@@ -40,12 +40,12 @@ def score_datasets_main(name, attributes_frequency_counts, contract_address, tok
     )  # Replace inputs with your collection-specific details here
 
     # Generate scores for a collection
-    token_attr_scores, token_attr_weights, token_attr_names, sorted_token_rarities = RarityRanker.rank_collection(collection=collection)
+    token_attr_scores, token_attr_names, sorted_token_rarities = RarityRanker.rank_collection(collection=collection)
 
     json_output = {}
     for idx, rarity_token in enumerate(sorted_token_rarities):
         token_id = rarity_token.token.token_identifier.token_id
         rank = rarity_token.rank
         score = rarity_token.score
-        json_output[token_id] = {"rank": rank, "score": score, "token_attr_scores": token_attr_scores[idx], "token_attr_weights": token_attr_weights[idx], "token_attr_names": token_attr_names[idx]}
+        json_output[token_id] = {"rank": rank, "score": score, "token_attr_scores": token_attr_scores[idx], "token_attr_names": token_attr_names[idx]}
     return json_output
