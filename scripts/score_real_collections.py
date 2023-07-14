@@ -48,7 +48,7 @@ def score_collection_and_output_results(
     print(f"Created collection {slug} with {collection.token_total_supply} tokens")
 
     # Score, rank  and sort ascending by token rarity rank
-    sorted_token_rarities: list[TokenRarity] = RarityRanker.rank_collection(
+    token_attr_scores, token_attr_names, sorted_token_rarities = RarityRanker.rank_collection(
         collection=collection
     )
 
@@ -56,29 +56,16 @@ def score_collection_and_output_results(
     print("Token ID and their ranks and scores, sorted by rank")
     json_output = {}
     csv_rows = []
-    for rarity_token in sorted_token_rarities:
+    for idx, rarity_token in enumerate(sorted_token_rarities):
         token_id = rarity_token.token.token_identifier.token_id
         rank = rarity_token.rank
         score = rarity_token.score
-        json_output[token_id] = {"rank": rank, "score": score}
+        json_output[token_id] = {"rank": rank, "score": score, "token_attr_scores": token_attr_scores[idx], "token_attr_names": token_attr_names[idx]}
         csv_rows.append([token_id, rank, score])
-
-    # Write to json
-    if output_filename.endswith(".json"):
-        with open(output_filename, "w") as jsonfile:
-            json.dump(json_output, jsonfile, indent=4)
-
-    # Write to csv
-    if output_filename.endswith(".csv"):
-        with open(output_filename, "w") as csvfile:
-            writer = csv.writer(csvfile)
-            # headers
-            writer.writerow(["token_id", "rank", "score"])
-            # content
-            writer.writerows(csv_rows)
+    return json_output
 
 
-if __name__ == "__main__":
+def score_collection_main(collection_name):
     """This script by default fetches bored ape yacht club collection and token
     metadata from the Opensea API via opensea_api_helpers and scores + ranks the
     collection via OpenRarity scorer.
@@ -105,7 +92,9 @@ if __name__ == "__main__":
         Example:
         `python -m scripts.score_real_collections boredapeyachtclub proof-moonbirds`
     """
+    
     args = parser.parse_args()
+    args.slugs = [collection_name]
     use_cache = args.use_cache
     print(f"Scoring collections: {args.slugs} with {use_cache=}")
     print(f"Output file prefix: {args.filename_prefix} with type .{args.filetype}")
@@ -114,14 +103,8 @@ if __name__ == "__main__":
     for slug in args.slugs:
         output_filename = f"{args.filename_prefix}_{slug}.{args.filetype}"
         print(f"Generating results for: {slug}")
-        score_collection_and_output_results(
+        return score_collection_and_output_results(
             slug=slug,
             output_filename=output_filename,
             use_cache=use_cache,
         )
-        print(f"Outputted results to: {output_filename}")
-        files.append(output_filename)
-
-    print("Finished scoring and ranking collections. Output files:")
-    for file in files:
-        print(f"\t{file}")

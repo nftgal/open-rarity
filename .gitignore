@@ -40,3 +40,6 @@ score_real_collections_results*.json
 # Local cache files
 cached_data/*.json
 cached_data/*/*.json
+
+#.env
+.env

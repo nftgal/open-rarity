@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  ranker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    volumes:
+      - ./cached_data:/app/cached_data
+    networks:
+      default: {}
+    ports:
+      - 127.0.0.1:${PORT:-5000}:5000
+    environment:
+      OS_API_KEY: ${OS_API_KEY}
+
+networks:
+  default:
+    name: ${NETWORK_NAME:-nftgal-demo}
+    external: true

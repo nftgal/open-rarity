@@ -69,7 +69,7 @@ def get_token_attributes_scores_and_weights(
 
     scores = [total_supply / attr.total_tokens for attr in sorted_attrs]
 
-    return (scores, attr_weights)
+    return (scores, attr_weights, sorted_attr_names)
 
 
 def _convert_to_collection_attributes_dict(collection, token):

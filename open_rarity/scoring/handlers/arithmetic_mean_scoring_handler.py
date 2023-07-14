@@ -28,12 +28,24 @@ class ArithmeticMeanScoringHandler:
         tokens: list[Token],
     ) -> list[float]:
         collection_null_attributes = collection.extract_null_attributes()
-        return [
+        data = [
             self._score_token(
                 collection, t, self.normalized, collection_null_attributes
             )
             for t in tokens
         ]
+
+        token_attr_scores = []
+        token_attr_weights = []
+        token_attr_names = []
+        token_scores = []
+        for attr_scores, attr_weights, sorted_attr_names, token_score in data:
+            token_attr_scores.append(attr_scores)
+            token_attr_weights.append(attr_weights)
+            token_attr_names.append(sorted_attr_names)
+            token_scores.append(token_score)
+
+        return (token_attr_scores, token_attr_weights, token_attr_names, token_scores)
 
     # Private methods
     def _score_token(
@@ -65,7 +77,7 @@ class ArithmeticMeanScoringHandler:
         float
             The token score
         """
-        attr_scores, attr_weights = get_token_attributes_scores_and_weights(
+        attr_scores, attr_weights, sorted_attr_names = get_token_attributes_scores_and_weights(
             collection=collection,
             token=token,
             normalized=normalized,
@@ -73,4 +85,4 @@ class ArithmeticMeanScoringHandler:
         )
 
         avg = float(np.average(attr_scores, weights=attr_weights))
-        return avg
+        return (attr_scores, attr_weights, sorted_attr_names, avg)
